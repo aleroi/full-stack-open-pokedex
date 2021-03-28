@@ -53,7 +53,7 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
         if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') && failure() }}
-      - name: send slack success notification
+      name: notification on deploy success
         uses: 8398a7/action-slack@v3
         if: ${{ success() && github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip') }}
         with:
@@ -61,12 +61,11 @@ jobs:
           fields: commit,author,took
           custom_payload: |
             {
-              username: 'action-slack',
+              username: 'github_action',
               attachments: [{
-              color: 'good',
-                text: `A new version deployed to https://pokedex123-fullstack.herokuapp.com/ (${process.env.AS_COMMIT}) by ${process.env.AS_AUTHOR} succeeded in ${process.env.AS_TOOK}`,
+                color: 'good',
+                text: `A new version deployed (${process.env.AS_COMMIT}) by ${process.env.AS_AUTHOR} build took ${process.env.AS_TOOK}`
               }]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
